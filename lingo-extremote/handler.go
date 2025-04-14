@@ -1,6 +1,7 @@
 package extremote
 
 import (
+	"github.com/leo82309/ipod/ws"
 	"github.com/oandrew/ipod"
 )
 
@@ -48,7 +49,7 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		case TrackInfoCaps:
 			info = &TrackCaps{
 				Caps:         0x0,
-				TrackLength:  300 * 1000,
+				TrackLength:  uint32(ws.WSState.TotalTime * 1000),
 				ChapterCount: 1,
 			}
 		case TrackInfoDescription, TrackInfoLyrics:
@@ -86,9 +87,9 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		ipod.Respond(req, tr, &ReturnCategorizedDatabaseRecord{})
 	case *GetPlayStatus:
 		ipod.Respond(req, tr, &ReturnPlayStatus{
-			TrackLength:   300 * 1000,
-			TrackPosition: 20 * 1000,
-			State:         PlayerStatePaused,
+			TrackLength:   uint32(ws.WSState.TotalTime * 1000),
+			TrackPosition: uint32(ws.WSState.ElapsedTime * 1000),
+			State:         PlayerStatePlaying,
 		})
 	case *GetCurrentPlayingTrackIndex:
 		ipod.Respond(req, tr, &ReturnCurrentPlayingTrackIndex{
@@ -96,15 +97,15 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		})
 	case *GetIndexedPlayingTrackTitle:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackTitle{
-			Title: ipod.StringToBytes("title"),
+			Title: ipod.StringToBytes(ws.WSSongInfo.Title),
 		})
 	case *GetIndexedPlayingTrackArtistName:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackArtistName{
-			ArtistName: ipod.StringToBytes("artist"),
+			ArtistName: ipod.StringToBytes(ws.WSSongInfo.Artist),
 		})
 	case *GetIndexedPlayingTrackAlbumName:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackAlbumName{
-			AlbumName: ipod.StringToBytes("album"),
+			AlbumName: ipod.StringToBytes(ws.WSSongInfo.Album),
 		})
 	case *SetPlayStatusChangeNotification:
 		ipod.Respond(req, tr, ackSuccess(req))
@@ -136,7 +137,7 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		})
 	case *GetNumPlayingTracks:
 		ipod.Respond(req, tr, &ReturnNumPlayingTracks{
-			NumTracks: 1,
+			NumTracks: uint32(len(ws.WSQueue)),
 		})
 	case *SetCurrentPlayingTrack:
 	case *SelectSortDBRecord:

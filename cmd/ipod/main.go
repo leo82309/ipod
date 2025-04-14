@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
+	"github.com/leo82309/ipod/ws"
 	"github.com/oandrew/ipod"
 	"github.com/oandrew/ipod/hid"
 	audio "github.com/oandrew/ipod/lingo-audio"
@@ -331,7 +332,7 @@ func logCmd(cmd *ipod.Command, err error, msg string) {
 
 func processFrames(frameTransport ipod.FrameReadWriter) {
 	serde := ipod.CommandSerde{}
-
+	go ws.Start()
 	for {
 		inFrame, err := frameTransport.ReadFrame()
 		if err == io.EOF {
