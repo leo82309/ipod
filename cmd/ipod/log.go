@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/oandrew/ipod"
+	"github.com/leo82309/ipod"
 	"github.com/sirupsen/logrus"
 )
 

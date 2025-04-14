@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/oandrew/ipod"
+	"github.com/leo82309/ipod"
 )
 
 func init() {

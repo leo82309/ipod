@@ -3,7 +3,7 @@ package general
 import (
 	"bytes"
 
-	"github.com/oandrew/ipod"
+	"github.com/leo82309/ipod"
 )
 
 type DeviceGeneral interface {

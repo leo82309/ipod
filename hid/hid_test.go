@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/oandrew/ipod/hid"
+	"github.com/leo82309/ipod/hid"
 )
 
 type testReportWriter struct {

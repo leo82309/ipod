@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/oandrew/ipod"
+	"github.com/leo82309/ipod"
 )
 
 func init() {
@@ -249,7 +249,7 @@ type RetTrackArtworkData struct {
 	Data         []byte
 }
 
-//ack
+// ack
 type ResetDBSelection struct {
 }
 
