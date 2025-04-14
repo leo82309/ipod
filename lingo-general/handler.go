@@ -128,7 +128,7 @@ func HandleGeneral(req *ipod.Command, tr ipod.CommandWriter, dev DeviceGeneral) 
 		})
 	case *RequestLingoProtocolVersion:
 		var resp ReturnLingoProtocolVersion
-		resp.Lingo = msg.Lingo
+		resp.Lingo = 6
 		resp.Major, resp.Minor = dev.LingoProtocolVersion(msg.Lingo)
 		ipod.Respond(req, tr, &resp)
 	case *RequestTransportMaxPayloadSize:

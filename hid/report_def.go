@@ -46,6 +46,7 @@ var DefaultReportDefs = ReportDefs{
 	ReportDef{ID: 0x07, Len: 14, Dir: ReportDirAccIn},
 	ReportDef{ID: 0x08, Len: 20, Dir: ReportDirAccIn},
 	ReportDef{ID: 0x09, Len: 63, Dir: ReportDirAccIn},
+	ReportDef{ID: 0xAA, Len: 1024, Dir: ReportDirAccIn},
 }
 
 var LegacyReportDefs = ReportDefs{
@@ -61,6 +62,7 @@ var LegacyReportDefs = ReportDefs{
 	ReportDef{ID: 0x0A, Len: 385, Dir: ReportDirAccIn},
 	ReportDef{ID: 0x0B, Len: 513, Dir: ReportDirAccIn},
 	ReportDef{ID: 0x0C, Len: 767, Dir: ReportDirAccIn},
+	ReportDef{ID: 0xAA, Len: 1024, Dir: ReportDirAccIn},
 
 	ReportDef{ID: 0x0D, Len: 5, Dir: ReportDirAccOut},
 	ReportDef{ID: 0x0E, Len: 9, Dir: ReportDirAccOut},

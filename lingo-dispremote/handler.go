@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	ws "github.com/leo82309/ipod/ws"
 	"github.com/oandrew/ipod"
 )
 
@@ -48,12 +49,12 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 
 		switch msg.InfoType {
 		case InfoTypeTrackPositionMs:
-			t.InfoData = &InfoTrackPositionMs{TrackPositionMs: 0}
+			t.InfoData = &InfoTrackPositionMs{TrackPositionMs: uint32(ws.WSState.ElapsedTime * 1000)}
 		case InfoTypeTrackIndex:
-			t.InfoData = &InfoTrackIndex{TrackIndex: 1}
+			t.InfoData = &InfoTrackIndex{TrackIndex: uint32(ws.WSState.SongPos)}
 		case InfoTypeChapterIndex:
 			t.InfoData = &InfoChapterIndex{
-				TrackIndex:   0,
+				TrackIndex:   uint32(ws.WSState.SongPos),
 				ChapterCount: 0,
 				ChapterIndex: 0,
 			}
@@ -89,7 +90,7 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 		case InfoTypeAudiobookSpeed:
 			t.InfoData = &InfoAudiobookSpeed{0x00}
 		case InfoTypeTrackPositionSec:
-			t.InfoData = &InfoTrackPositionSec{0}
+			t.InfoData = &InfoTrackPositionSec{uint16(ws.WSState.ElapsedTime)}
 		case InfoTypeVolume2:
 			t.InfoData = &InfoVolume2{
 				MuteState:           0x00,
@@ -107,7 +108,10 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 
 	case *GetPlayStatus:
 		ipod.Respond(req, tr, &RetPlayStatus{
-			PlayState: 0, //stopped
+			PlayState:   1, //playing
+			TrackIndex:  uint32(ws.WSState.SongPos),
+			TrackLength: uint32(ws.WSState.TotalTime) * 1000,
+			TrackPos:    uint32(ws.WSState.SongPos),
 		})
 
 	case *SetCurrentPlayingTrack:
@@ -131,11 +135,11 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 			}
 		case TrackInfoTypeArtist:
 			t.InfoData = &TrackInfoArtist{
-				Name: ipod.StringToBytes(""),
+				Name: ipod.StringToBytes(ws.WSSongInfo.Artist),
 			}
 		case TrackInfoTypeAlbum:
 			t.InfoData = &TrackInfoAlbum{
-				Name: ipod.StringToBytes(""),
+				Name: ipod.StringToBytes(ws.WSSongInfo.Album),
 			}
 		case TrackInfoTypeGenre:
 			t.InfoData = &TrackInfoGenre{
@@ -143,7 +147,7 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 			}
 		case TrackInfoTypeTrack:
 			t.InfoData = &TrackInfoTrack{
-				Title: ipod.StringToBytes("track"),
+				Title: ipod.StringToBytes(ws.WSSongInfo.Title),
 			}
 		case TrackInfoTypeComposer:
 			t.InfoData = &TrackInfoComposer{
@@ -166,7 +170,7 @@ func HandleDispRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceDispRe
 		ipod.Respond(req, tr, t)
 	case *GetNumPlayingTracks:
 		ipod.Respond(req, tr, &RetNumPlayingTracks{
-			NumPlayTracks: 0,
+			NumPlayTracks: uint32(len(ws.WSQueue)),
 		})
 	case *GetArtworkFormats:
 		ipod.Respond(req, tr, &RetArtworkFormats{})
