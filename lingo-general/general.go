@@ -92,6 +92,7 @@ var Lingos struct {
 	RequestApplicationLaunch       `id:"0x64"`
 	GetNowPlayingFocusApp          `id:"0x65"`
 	RetNowPlayingFocusApp          `id:"0x66"`
+	IAP2ProtocolChange             `id:"0xEE"`
 }
 
 type RequestIdentify struct{}
@@ -903,4 +904,7 @@ type GetNowPlayingFocusApp struct{}
 
 type RetNowPlayingFocusApp struct {
 	AppID []byte
+}
+
+type IAP2ProtocolChange struct {
 }
