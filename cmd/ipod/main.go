@@ -18,9 +18,9 @@ import (
 	dispremote "github.com/leo82309/ipod/lingo-dispremote"
 	extremote "github.com/leo82309/ipod/lingo-extremote"
 	general "github.com/leo82309/ipod/lingo-general"
-	_ "github.com/leo82309/ipod/lingo-simpleremote"
+	simpleremote "github.com/leo82309/ipod/lingo-simpleremote"
+	"github.com/leo82309/ipod/mpd"
 	"github.com/leo82309/ipod/trace"
-	"github.com/leo82309/ipod/ws"
 )
 
 var log = logrus.StandardLogger()
@@ -159,6 +159,7 @@ func main() {
 
 				reportR, reportW := hid.NewReportReader(rw), hid.NewReportWriter(rw)
 				frameTransport := hid.NewTransport(reportR, reportW, hidReportDefs)
+				go mpd.WatchStatus("127.0.0.1:6600", 1*time.Second)
 				processFrames(frameTransport)
 				return nil
 			},
@@ -332,7 +333,6 @@ func logCmd(cmd *ipod.Command, err error, msg string) {
 
 func processFrames(frameTransport ipod.FrameReadWriter) {
 	serde := ipod.CommandSerde{}
-	go ws.Start()
 	for {
 		inFrame, err := frameTransport.ReadFrame()
 		if err == io.EOF {
@@ -397,8 +397,7 @@ func handlePacket(cmdWriter ipod.CommandWriter, cmd *ipod.Command) {
 		general.HandleGeneral(cmd, cmdWriter, devGeneral)
 
 	case ipod.LingoSimpleRemoteID:
-		//todo
-		log.Warn("Lingo SimpleRemote is not supported yet")
+		simpleremote.HandleSimpleRemote(cmd, cmdWriter, nil)
 	case ipod.LingoDisplayRemoteID:
 		dispremote.HandleDispRemote(cmd, cmdWriter, nil)
 	case ipod.LingoExtRemoteID:

@@ -2,7 +2,7 @@ package extremote
 
 import (
 	"github.com/leo82309/ipod"
-	"github.com/leo82309/ipod/ws"
+	"github.com/leo82309/ipod/mpd"
 )
 
 type DeviceExtRemote interface {
@@ -49,7 +49,7 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		case TrackInfoCaps:
 			info = &TrackCaps{
 				Caps:         0x0,
-				TrackLength:  uint32(ws.WSState.TotalTime * 1000),
+				TrackLength:  uint32(mpd.CurrentStatus.Duration * 1000),
 				ChapterCount: 1,
 			}
 		case TrackInfoDescription, TrackInfoLyrics:
@@ -87,8 +87,8 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		ipod.Respond(req, tr, &ReturnCategorizedDatabaseRecord{})
 	case *GetPlayStatus:
 		ipod.Respond(req, tr, &ReturnPlayStatus{
-			TrackLength:   uint32(ws.WSState.TotalTime * 1000),
-			TrackPosition: uint32(ws.WSState.ElapsedTime * 1000),
+			TrackLength:   uint32(mpd.CurrentStatus.Duration * 1000),
+			TrackPosition: uint32(mpd.CurrentStatus.Elapsed * 1000),
 			State:         PlayerStatePlaying,
 		})
 	case *GetCurrentPlayingTrackIndex:
@@ -97,15 +97,15 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		})
 	case *GetIndexedPlayingTrackTitle:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackTitle{
-			Title: ipod.StringToBytes(ws.WSSongInfo.Title),
+			Title: ipod.StringToBytes(mpd.CurrentStatus.Title),
 		})
 	case *GetIndexedPlayingTrackArtistName:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackArtistName{
-			ArtistName: ipod.StringToBytes(ws.WSSongInfo.Artist),
+			ArtistName: ipod.StringToBytes(mpd.CurrentStatus.Artist),
 		})
 	case *GetIndexedPlayingTrackAlbumName:
 		ipod.Respond(req, tr, &ReturnIndexedPlayingTrackAlbumName{
-			AlbumName: ipod.StringToBytes(ws.WSSongInfo.Album),
+			AlbumName: ipod.StringToBytes(mpd.CurrentStatus.Album),
 		})
 	case *SetPlayStatusChangeNotification:
 		ipod.Respond(req, tr, ackSuccess(req))
@@ -137,7 +137,7 @@ func HandleExtRemote(req *ipod.Command, tr ipod.CommandWriter, dev DeviceExtRemo
 		})
 	case *GetNumPlayingTracks:
 		ipod.Respond(req, tr, &ReturnNumPlayingTracks{
-			NumTracks: uint32(len(ws.WSQueue)),
+			NumTracks: uint32(mpd.CurrentStatus.PlaylistLength),
 		})
 	case *SetCurrentPlayingTrack:
 	case *SelectSortDBRecord:
